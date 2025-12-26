@@ -41,5 +41,5 @@ jobs:
       - name: Deploy infrastructure
         run: |
           python scripts/deploy_infra.py \
-            --env ${{ inputs.project_name }} \
+            --project_name ${{ inputs.project_name }} \
             --region ${{ inputs.aws_region }}
