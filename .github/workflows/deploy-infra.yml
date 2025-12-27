@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       project_name:
-        description: "プロジェクト名（Cognito User Pool 名）"
+        description: "プロジェクト名（Cognito User Pool名 / lambda role名 / lambda api名）"
         required: true
       aws_region:
         description: "AWS region"
@@ -30,13 +30,24 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install boto3
+          pip install boto3==1.42.16
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ inputs.aws_region }}
+
+      - name: Lambda用zipをビルド
+        run: |
+          rm -rf lambda_build lambda_function.zip
+          mkdir -p lambda_build
+
+          pip install -r backend/requirements.txt -t lambda_build
+          cp -r backend/app lambda_build/
+
+          cd lambda_build
+          zip -r ../lambda_function.zip .
 
       - name: Deploy infrastructure
         run: |
