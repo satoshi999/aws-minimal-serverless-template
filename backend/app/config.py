@@ -10,6 +10,10 @@ class Settings(BaseModel):
     local_jwt_issuer: str = os.getenv("LOCAL_JWT_ISSUER", "local-dev")
     local_jwt_audience: str = os.getenv("LOCAL_JWT_AUDIENCE", "local-dev")
 
+    # cognito
+    cognito_user_pool_id: str = os.getenv("COGNITO_USER_POOL_ID")
+    cognito_app_client_id: str = os.getenv("COGNITO_APP_CLIENT_ID")
+
     # dynamodb
     aws_region: str = os.getenv("AWS_REGION", "ap-northeast-1")
     ddb_endpoint_url: str | None = os.getenv("DDB_ENDPOINT_URL") or None

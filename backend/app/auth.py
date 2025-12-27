@@ -1,7 +1,8 @@
+import requests
+from functools import lru_cache
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-import jwt
-from jwt import InvalidTokenError
+from jose import jwt, JWTError
 from pydantic import BaseModel
 from .config import settings
 import time
@@ -13,6 +14,15 @@ bearer = HTTPBearer(auto_error=False)
 class CurrentUser(BaseModel):
     sub: str
     email: str | None = None
+
+
+@lru_cache
+def get_jwks():
+    url = (
+        f"https://cognito-idp.{settings.aws_region}.amazonaws.com/"
+        f"{settings.cognito_user_pool_id}/.well-known/jwks.json"
+    )
+    return requests.get(url).json()
 
 
 def issue_local_dev_token(sub: str = "user-1", email: str = "user1@example.com") -> str:
@@ -29,19 +39,17 @@ def issue_local_dev_token(sub: str = "user-1", email: str = "user1@example.com")
 
 
 def get_current_user(
-    cred: HTTPAuthorizationCredentials | None = Depends(bearer),
+    cred: HTTPAuthorizationCredentials = Depends(bearer),
 ) -> CurrentUser:
-    if settings.auth_mode != "local":
-        raise HTTPException(
-            status_code=501, detail="AUTH_MODE=cognito is not implemented yet"
-        )
-
     if cred is None or cred.scheme.lower() != "bearer":
-        raise HTTPException(status_code=401, detail="Missing Bearer token")
+        raise HTTPException(status_code=401, detail="Missing bearer token")
 
     token = cred.credentials
 
-    try:
+    # ------------------
+    # local（開発用）
+    # ------------------
+    if settings.auth_mode == "local":
         payload = jwt.decode(
             token,
             settings.local_jwt_secret,
@@ -49,11 +57,33 @@ def get_current_user(
             issuer=settings.local_jwt_issuer,
             audience=settings.local_jwt_audience,
         )
-    except InvalidTokenError as e:
-        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+        return CurrentUser(
+            sub=payload["sub"],
+            email=payload.get("email"),
+        )
 
-    sub = payload.get("sub")
-    if not sub:
-        raise HTTPException(status_code=401, detail="Token missing sub")
+    # ------------------
+    # prod（Cognito）
+    # ------------------
+    if settings.auth_mode == "cognito":
+        jwks = get_jwks()
+        try:
+            payload = jwt.decode(
+                token,
+                jwks,
+                algorithms=["RS256"],
+                issuer=(
+                    f"https://cognito-idp.{settings.aws_region}.amazonaws.com/"
+                    f"{settings.cognito_user_pool_id}"
+                ),
+                audience=settings.cognito_app_client_id,
+            )
+        except JWTError as e:
+            raise HTTPException(status_code=401, detail=str(e))
 
-    return CurrentUser(sub=sub, email=payload.get("email"))
+        return CurrentUser(
+            sub=payload["sub"],
+            email=payload.get("email"),
+        )
+
+    raise HTTPException(status_code=500, detail="Invalid AUTH_MODE")

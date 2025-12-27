@@ -68,10 +68,8 @@ def create_lambda(
 
     env_vars = {
         "AUTH_MODE": "cognito",
-        "COGNITO_REGION": region,
         "COGNITO_USER_POOL_ID": cognito["user_pool_id"],
         "COGNITO_APP_CLIENT_ID": cognito["app_client_id"],
-        "AWS_REGION": region,
     }
 
     try:
