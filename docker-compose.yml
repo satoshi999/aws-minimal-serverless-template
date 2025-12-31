@@ -1,46 +1,26 @@
 services:
-  dynamodb:
-    image: amazon/dynamodb-local:latest
-    command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
-    working_dir: /home/dynamodblocal
-
-  dynamodb-admin:
-    image: aaronshaf/dynamodb-admin
-    environment:
-      DYNAMO_ENDPOINT: http://dynamodb:8000
-      AWS_REGION: ap-northeast-1
-      AWS_ACCESS_KEY_ID: dummy
-      AWS_SECRET_ACCESS_KEY: dummy
-    ports:
-      - "8001:8001"
-    depends_on:
-      - dynamodb
+  cdk:
+    image: node:24.1.0-slim
+    working_dir: /infra
+    volumes:
+      - ./infra/:/infra
+      - ${HOME}/.aws/:/root/.aws
+    env_file: ./.env
+    tty: true
 
   backend:
     image: python:3.13-slim
     working_dir: /app
     volumes:
       - ./backend:/app
-    environment:
-      # --- local auth mode ---
-      AUTH_MODE: "local"
-      LOCAL_JWT_SECRET: "dev-secret-change-me"
-      LOCAL_JWT_ISSUER: "local-dev"
-      LOCAL_JWT_AUDIENCE: "local-dev"
-
-      # --- dynamodb local ---
-      DDB_ENDPOINT_URL: "http://dynamodb:8000"
-      AWS_REGION: "ap-northeast-1"
-      AWS_ACCESS_KEY_ID: "dummy"
-      AWS_SECRET_ACCESS_KEY: "dummy"
+      - ${HOME}/.aws/:/root/.aws
+    env_file: ./.env
     ports:
       - "8000:8000"
     command: >
       sh -c "pip install --no-cache-dir -r requirements.txt &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     restart: unless-stopped
-    depends_on:
-      - dynamodb
 
   frontend:
     image: node:24.1.0
