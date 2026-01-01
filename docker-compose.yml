@@ -5,8 +5,9 @@ services:
     volumes:
       - ./infra/:/infra
       - ${HOME}/.aws/:/root/.aws
-    env_file: ./.env
+    env_file: ./.env.local
     tty: true
+    profiles: ["cdk:local"]
 
   backend:
     image: python:3.13-slim
@@ -14,16 +15,17 @@ services:
     volumes:
       - ./backend:/app
       - ${HOME}/.aws/:/root/.aws
-    env_file: ./.env
+    env_file: ./.env.local
     ports:
       - "8000:8000"
     command: >
       sh -c "pip install --no-cache-dir -r requirements.txt &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     restart: unless-stopped
+    profiles: ["app:local"]
 
   frontend:
-    image: node:24.1.0
+    image: node:24.1.0-slim
     working_dir: /app
     volumes:
       - ./frontend:/app
@@ -31,3 +33,4 @@ services:
       - "5173:5173"
     command: >
       sh -c "npm ci && npm run dev -- --host"
+    profiles: ["app:local"]

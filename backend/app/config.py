@@ -25,7 +25,7 @@ class Settings(BaseModel):
     aws_region: str = resolve_region()
 
     # cognito(認証用)
-    cognito_app_client_id: str = os.getenv("COGNITO_APP_CLIENT_ID")
+    cognito_user_pool_client_id: str = os.getenv("COGNITO_USER_POOL_CLIENT_ID")
     cognito_user_pool_id: str = os.getenv("COGNITO_USER_POOL_ID")
     cognito_jwks_cache_seconds: int = int(
         os.getenv("COGNITO_JWKS_CACHE_SECONDS", "21600")

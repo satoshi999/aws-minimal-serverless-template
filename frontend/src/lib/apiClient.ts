@@ -6,7 +6,7 @@ import { fetchAuthSession } from "aws-amplify/auth";
  */
 export const authedFetch: typeof fetch = async (input, init) => {
   const { tokens } = await fetchAuthSession();
-  const token = tokens?.idToken?.toString();
+  const token = tokens?.accessToken?.toString();
   if (!token) throw new Error("No access token");
 
   const res = await fetch(input, {

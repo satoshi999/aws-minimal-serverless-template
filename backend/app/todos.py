@@ -47,6 +47,7 @@ def build_table_name(name):
 
 def user_pk(user: User) -> str:
     # ユーザー識別は sub を使用（email統合はアプリ側の設計で）
+    # subは認証方式ごとに変わり得る（統合したいなら別設計）
     return f"USER#{user.sub}"
 
 
