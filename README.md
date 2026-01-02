@@ -55,9 +55,9 @@ dev / prod は **Lambda + DynamoDB + Cognito + CloudFront + S3** を CDK で一�
   - `infra/bin/` … エントリ（stage 固定）
     - `local.ts` / `dev.ts` / `prod.ts`
   - `infra/lib/` … 各スタック実装
-  - `infra/scripts/` … 補助スクリプト（`.env.local` 同期など）
+  - `infra/scripts/` … 補助スクリプト（`.env.local` 同期）
 - `build_artifacts.sh` … バックエンド + フロントエンドのビルド統合シェル
-- `.env` … PROJECT_NAME / AWS_PROFILE など
+- `.env` … PROJECT_NAME / AWS_PROFILE
 - `.env.local` … local 用の Cognito 設定（自動生成）
 
 ---
