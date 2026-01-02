@@ -111,6 +111,7 @@ docker-compose exec cdk bash
 
 # local アプリ起動（ホストで実行）
 docker-compose --profile app:local up
+```
 
 ---
 
