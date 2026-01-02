@@ -40,9 +40,6 @@ export class WebStack extends Stack {
       autoDeleteObjects: ctx.stage === "prod" ? false : true,
     });
 
-    const oai = new cloudfront.OriginAccessIdentity(this, "OAI");
-    bucket.grantRead(oai);
-
     const s3Origin = origins.S3BucketOrigin.withOriginAccessControl(bucket);
 
     // Function URL を CloudFront の HTTP Origin にする
