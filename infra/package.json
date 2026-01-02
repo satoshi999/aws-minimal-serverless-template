@@ -8,11 +8,15 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk",
-    "deploy:local:cognito": "cdk deploy -c deployTarget=cognito --app \"ts-node --transpile-only bin/local.ts\"",
-    "deploy:local:dynamodb":  "cdk deploy -c deployTarget=dynamodb --app \"ts-node --transpile-only bin/local.ts\"",
-    "destroy:local:dynamodb": "cdk destroy -c deployTarget=dynamodb --app \"ts-node --transpile-only bin/local.ts\"",
-    "deploy:prod:all":      "cdk deploy --all --app \"ts-node --transpile-only bin/prod.ts\""
+    "cdk:local": "cdk --app \"ts-node --transpile-only bin/local.ts\"",
+    "cdk:dev": "cdk --app \"ts-node --transpile-only bin/dev.ts\"",
+    "cdk:prod": "cdk --app \"ts-node --transpile-only bin/prod.ts\"",
+    "deploy:local:cognito": "npm run cdk:local -- deploy -c deployTarget=cognito --outputs-file cdk-outputs.json",
+    "deploy:local:dynamodb": "npm run cdk:local -- deploy -c deployTarget=dynamodb",
+    "deploy:local:all": "npm run cdk:local -- deploy --all -c deployTarget=all --outputs-file cdk-outputs.json",
+    "deploy:dev":  "npm run cdk:dev -- deploy --all",
+    "deploy:prod": "npm run cdk:prod -- deploy --all",
+    "sync:env:local": "ts-node scripts/sync-env-local.ts"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

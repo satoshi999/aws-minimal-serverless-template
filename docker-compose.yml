@@ -1,13 +1,13 @@
 services:
   cdk:
     image: node:24.1.0-slim
-    working_dir: /infra
+    working_dir: /app/infra
     volumes:
-      - ./infra/:/infra
+      - ./:/app
       - ${HOME}/.aws/:/root/.aws
-    env_file: ./.env.local
+    env_file: ./.env
     tty: true
-    profiles: ["cdk:local"]
+    profiles: ["cdk"]
 
   backend:
     image: python:3.13-slim
@@ -15,7 +15,11 @@ services:
     volumes:
       - ./backend:/app
       - ${HOME}/.aws/:/root/.aws
-    env_file: ./.env.local
+    env_file:
+      - ./.env
+      - ./.env.local
+    environment:
+      STAGE: local
     ports:
       - "8000:8000"
     command: >

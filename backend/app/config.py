@@ -21,7 +21,7 @@ def resolve_region(profile: str | None = None) -> str:
 
 class Settings(BaseModel):
     project_name: str = os.getenv("PROJECT_NAME")
-    env: str = os.getenv("ENV")
+    stage: str = os.getenv("STAGE")
     aws_region: str = resolve_region()
 
     # cognito(認証用)

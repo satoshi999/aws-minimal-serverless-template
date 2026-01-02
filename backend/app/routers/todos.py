@@ -42,7 +42,7 @@ def dynamodb_resource():
 
 
 def build_table_name(name):
-    return f"{name}-{settings.project_name}-{settings.env}"
+    return f"{name}-{settings.project_name}-{settings.stage}"
 
 
 def user_pk(user: User) -> str:

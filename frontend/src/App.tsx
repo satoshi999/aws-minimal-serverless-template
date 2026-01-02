@@ -24,7 +24,7 @@ function App({ onSignOut }: Props) {
     setLoading(true)
 
     try {
-      const res = await authedFetch("/todos")
+      const res = await authedFetch("/api/todos")
       if (!res.ok) throw new Error("failed to fetch todos")
 
       const data = await res.json()
@@ -38,7 +38,7 @@ function App({ onSignOut }: Props) {
   async function onAdd() {
     if (!title.trim()) return
 
-    const res = await authedFetch("/todos", {
+    const res = await authedFetch("/api/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ function App({ onSignOut }: Props) {
   }
 
   async function onToggleDone(todo: Todo) {
-    await authedFetch(`/todos/${todo.id}`, {
+    await authedFetch(`/api/todos/${todo.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -79,7 +79,7 @@ function App({ onSignOut }: Props) {
     const next = editingTitle.trim()
     if (!next) return
 
-    await authedFetch(`/todos/${todo.id}`, {
+    await authedFetch(`/api/todos/${todo.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

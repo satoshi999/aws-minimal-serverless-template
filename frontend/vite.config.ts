@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/todos": "http://backend:8000",
+      "/api": "http://backend:8000",
     },
   },
 });
