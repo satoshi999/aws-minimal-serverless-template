@@ -121,7 +121,7 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 flowchart LR
   subgraph Local[Local（開発）]
     B[Browser<br/>http://localhost:5173] --> V[Vite dev server React]
-    V -->|/api* JWT required except /api/public_config| A[FastAPI Docker container / STAGE=local]
+    V -->|/api* JWT required except /api/public_config| A[FastAPI / STAGE=local]
 
     B -->|Sign-in / Token| C[Cognito User Pool STAGE=local]
     A -->|JWT verify| C
