@@ -8,13 +8,17 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "cdk-local": "cdklocal --app \"ts-node --transpile-only bin/local.ts\"",
+    "cdk-local:bootstrap": "npm run cdk-local -- bootstrap -c deployTarget=all",
+    "deploy:localstack:dynamodb": "npm run cdk-local -- deploy -c deployTarget=dynamodb",
+    "deploy:localstack:cognito": "npm run cdk-local -- deploy -c deployTarget=cognito",
     "cdk:local": "cdk --app \"ts-node --transpile-only bin/local.ts\"",
     "cdk:dev": "cdk --app \"ts-node --transpile-only bin/dev.ts\"",
     "cdk:prod": "cdk --app \"ts-node --transpile-only bin/prod.ts\"",
     "deploy:local:cognito": "npm run cdk:local -- deploy -c deployTarget=cognito --outputs-file cdk-outputs.json",
     "deploy:local:dynamodb": "npm run cdk:local -- deploy -c deployTarget=dynamodb",
     "deploy:local:all": "npm run cdk:local -- deploy --all -c deployTarget=all --outputs-file cdk-outputs.json",
-    "deploy:dev":  "npm run cdk:dev -- deploy --all",
+    "deploy:dev": "npm run cdk:dev -- deploy --all",
     "deploy:prod": "npm run cdk:prod -- deploy --all",
     "sync:env:local": "ts-node scripts/sync-env-local.ts"
   },
@@ -29,6 +33,7 @@
   },
   "dependencies": {
     "aws-cdk-lib": "2.232.1",
+    "aws-cdk-local": "^3.0.1",
     "constructs": "^10.0.0"
   }
 }
