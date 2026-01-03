@@ -117,16 +117,18 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 * Frontend: React + Vite dev server
 * DB/Auth: DynamoDB / Cognito（AWS上の local 用リソース）
 
+```mermaid
 flowchart LR
   subgraph Local[Local（開発）]
     B[Browser<br/>http://localhost:5173] --> V[Vite dev server React]
-    V -->|/api*| A[FastAPI Docker container / STAGE=local]
+    V -->|/api* JWT required except /api/public_config| A[FastAPI Docker container / STAGE=local]
 
     B -->|Sign-in / Token| C[Cognito User Pool STAGE=local]
     A -->|JWT verify| C
 
     A --> D[DynamoDB STAGE=local]
   end
+```
 
 **dev / prod**
 
@@ -137,6 +139,7 @@ flowchart LR
   * `/api*` → API（Lambda 側）
   * それ以外 → S3 静的配信
 
+```mermaid
 flowchart LR
   subgraph DevProd[dev / prod（AWS）]
     U[User Browser] --> CF[CloudFront]
@@ -150,6 +153,7 @@ flowchart LR
     CF -->|static /*| S3[S3 frontend dist]
 
   end
+```
 
 ### 命名規約（リソース乱立防止）
 
