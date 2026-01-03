@@ -38,6 +38,8 @@ FastAPI + React の **最小構成サーバレステンプレ**です。
 
 標準で使う想定のポリシー:
 
+※ 個人検証向けに広めの権限にしています。最小権限での運用は用途に合わせて調整してください。
+
 * `AmazonCognitoPowerUser`
 * `AmazonDynamoDBFullAccess`
 * `AmazonSSMReadOnlyAccess`
@@ -121,7 +123,7 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 flowchart LR
   subgraph Local[Local（開発）]
     B[Browser<br/>http://localhost:5173] --> V[Vite dev server React]
-    V -->|/api* JWT required except /api/public_config| A[FastAPI / STAGE=local]
+    V -->|/api* JWT except public_config| A[FastAPI / STAGE=local]
 
     B -->|Sign-in / Token| C[Cognito User Pool STAGE=local]
     A -->|JWT verify| C
@@ -144,7 +146,7 @@ flowchart LR
   subgraph DevProd[dev / prod（AWS）]
     U[User Browser] --> CF[CloudFront]
 
-    CF -->|/api* JWT required except /api/public_config| L[Lambda Function URL<br/>FastAPI + Mangum]
+    CF -->|/api* JWT except public_config| L[Lambda Function URL<br/>FastAPI + Mangum]
 
     U -->|Sign-in / Token| C[Cognito User Pool]
     L -->|JWT verify| C
