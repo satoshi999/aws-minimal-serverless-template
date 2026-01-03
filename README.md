@@ -1,7 +1,7 @@
 # aws-minimal-serverless-template
 
-FastAPI + React の **最小構成サーバレステンプレ**です。
-「ローカルは普段通りに開発できる」「dev/prodはCDKで一括」「環境差分と手順を最小化」を目的にしています。
+local / dev / prod を最小手順で回す **AWS サーバレステンプレ**です。
+「ローカルはFastAPI + Reactの普段通りの開発に寄せる」「dev/prod は CDK で一括」「環境差分と手順を最小化」を目的にしています。
 
 ## このテンプレの思想（なぜこうしているか）
 
