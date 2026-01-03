@@ -132,6 +132,42 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 * `STAGE` は `local / dev / prod`
 * CDK エントリは `infra/bin/local.ts|dev.ts|prod.ts` で固定
 
+### CDK コマンド設計
+
+このリポジトリでは stage ごとに CDK のエントリを分けています（`bin/local.ts` / `bin/dev.ts` / `bin/prod.ts`）。
+CDK の任意サブコマンドは `npm run cdk:{stage} -- <cdk-subcommand>` として実行できます。
+
+```bash
+npm run cdk:local -- diff
+npm run cdk:dev   -- synth
+```
+
+local は DynamoDB と Cognito を用途に応じて分けてデプロイできます。
+
+```bash
+npm run deploy:local:cognito
+npm run deploy:local:dynamodb
+npm run deploy:local:all
+```
+
+`sync:env:local` は `cdk-outputs.json` を参照して `.env.local` を生成します（= local の Cognito を deploy 後に実行）。
+
+```bash
+npm run sync:env:local
+```
+
+### 環境変数
+
+`.env`
+
+* `PROJECT_NAME`: リソース名・スタック名のベース（`${PROJECT_NAME}-${STAGE}`）
+* `AWS_PROFILE`: `~/.aws` の profile 名
+
+`.env.local`（自動生成）
+
+* local 用 Cognito 設定（User Pool ID / Client ID）
+* `npm run sync:env:local` で `cdk-outputs.json` から生成
+
 ### docker-compose プロファイル
 
 * アプリ起動（local）: `--profile app:local`
