@@ -156,7 +156,7 @@ bash build_artifacts.sh
 
 * backend
 
-  * local: `.env.local` に保持（検証用）
+  * local: `.env.local` に保持
   * dev/prod: CDK が Lambda 環境変数として注入
 * frontend
 
