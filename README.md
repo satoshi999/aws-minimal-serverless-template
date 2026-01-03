@@ -198,6 +198,17 @@ bash build_artifacts.sh
 
   * 起動時に `GET /api/public_config` から取得して `Amplify.configure()` する
 
+### セキュリティ（このテンプレのスタンス）
+
+このテンプレは「最小構成 / 最短導入」を優先しており、セキュリティは最低限です（商用・高リスク用途は非推奨）。
+
+* API は基本的に Cognito の JWT 検証を前提（認証必須）
+* `GET /api/public_config` はフロント初期化用のため **未認証で公開**（Pool ID / Client ID を返すだけ）
+* dev/prod の API エンドポイントは CloudFront 経由で使う想定ですが、Function URL 自体は **公開設定（直叩き可能）** のままです
+  * レート制限 / WAF / 署名付きオリジン（OAC + SigV4）等は入れていません
+
+本番運用で締めたい場合は、WAF・レート制限・Function URL の IAM 化（+ CloudFront 署名）などを追加してください。
+
 ### DynamoDB テーブル定義の追加/変更
 
 * テーブル定義: `infra/lib/dynamodb-stack.ts`
