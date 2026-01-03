@@ -117,6 +117,17 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 * Frontend: React + Vite dev server
 * DB/Auth: DynamoDB / Cognito（AWS上の local 用リソース）
 
+flowchart LR
+  subgraph Local[Local（開発）]
+    B[Browser<br/>http://localhost:5173] --> V[Vite dev server React]
+    V -->|/api*| A[FastAPI Docker container / STAGE=local]
+
+    B -->|Sign-in / Token| C[Cognito User Pool STAGE=local]
+    A -->|JWT verify| C
+
+    A --> D[DynamoDB STAGE=local]
+  end
+
 **dev / prod**
 
 * Backend: Lambda（FastAPI を Mangum でラップしてデプロイ）
@@ -125,6 +136,20 @@ docker-compose exec cdk bash -lc "npm run deploy:prod"
 
   * `/api*` → API（Lambda 側）
   * それ以外 → S3 静的配信
+
+flowchart LR
+  subgraph DevProd[dev / prod（AWS）]
+    U[User Browser] --> CF[CloudFront]
+
+    CF -->|/api* JWT required except /api/public_config| L[Lambda Function URL<br/>FastAPI + Mangum]
+
+    U -->|Sign-in / Token| C[Cognito User Pool]
+    L -->|JWT verify| C
+    L --> D[DynamoDB]
+
+    CF -->|static /*| S3[S3 frontend dist]
+
+  end
 
 ### 命名規約（リソース乱立防止）
 
